@@ -2,14 +2,6 @@
   text-align: center;
 }
 
-.create-event{
-  display: none;
-}
-
-.create-event.active{
-  display: block;
-}
-
 .nonactivebtn {
   display: none;
 }

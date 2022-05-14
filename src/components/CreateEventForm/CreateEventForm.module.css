@@ -1,0 +1,67 @@
+.createEvent{
+    z-index: 8;
+    width: 100vw;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+    /* border: 2px solid black; */
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.5s;
+}
+
+.createEvent.active{
+    opacity: 1;
+    pointer-events: all;
+}
+
+.createForm {
+    z-index: 10;
+    max-width: 300px;
+    /* height: 300px; */
+    padding: 25px;
+    transform: scale(0.5);
+    border: 2px solid black;
+    transition: 0.4s all;
+    background-color: aliceblue;
+}
+  
+.createForm.active {
+    transform: scale(1);
+}
+
+.createFormInput {
+    width: 250px;
+    padding: 10px;
+    border: 2px solid black;
+    margin-bottom: 10px;
+}
+
+.createFormTextarea {
+    width: 250px;
+    height: 100px;
+    padding: 10px;
+    border: 2px solid black;
+    margin-bottom: 10px;
+}
+
+.picker {
+    width: 250px;
+    padding: 10px;
+    border: 2px solid black;
+    margin-bottom: 10px;
+}
+
+.createbtn {
+    width: 250px;
+    padding: 10px;
+    color: white;
+    background-color: rgb(134, 45, 128);
+    border: 2px solid black;
+    cursor: pointer;
+}

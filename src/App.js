@@ -8,6 +8,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./App.css";
+import CreateEventForm from "./components/CreateEventForm/CreateEventForm";
 
 const locales = {
     "ru": require("date-fns/locale/ru"),
@@ -23,7 +24,7 @@ const localizer = dateFnsLocalizer({
 const events = [];
 
 function App() {
-    const [newEvent, setNewEvent] = useState({ title: "", description: "", start: "", end: "" });
+    const [newEvent, setNewEvent] = useState({ title: "", description: "", start: "", end: "", id: null });
     const [allEvents, setAllEvents] = useState(events);
     const [activeCreateEvent, setActiveCreateEvent] = useState(false)
     const [ActiveAllEvent, setActiveAllEvent] = useState(false)
@@ -38,14 +39,11 @@ function App() {
             for(var i = 0; i < ev.length; i++){
                 var start = new Date(Date.parse(ev[i].start))
                 var end = new Date(Date.parse(ev[i].end))
-                console.log(start, end)
                 ev[i].start = start
                 ev[i].end = end
 
             }
             setAllEvents(ev);
-            console.log(ev)
-            
           },
           // Примечание: важно обрабатывать ошибки именно здесь, а не в блоке catch(),
           // чтобы не перехватывать исключения из ошибок в самих компонентах.
@@ -59,11 +57,9 @@ function App() {
   const handleAddEvent = () => {
         setAllEvents([...allEvents, newEvent]);
         setActiveCreateEvent(false)
-        setActiveAllEvent(false)
         var nev = newEvent
         nev.start = nev.start.toISOString()
         nev.end = nev.end.toISOString()
-        console.log(nev)
         fetch("http://83.172.39.220:8000/events/", {
           method: 'POST',
           mode: 'cors',
@@ -73,61 +69,24 @@ function App() {
           body: JSON.stringify(nev)
 
         })
-        setNewEvent({ title: "", description: "", start: "", end: "" })
+        setNewEvent({ title: "", description: "", start: "", end: "", id: null })
     }
 
-
-
-
+    const close_and_save = () => {
+      setActiveAllEvent(false)
+    }
 
     return (
         <div className="App">
-            <div 
-              className={activeCreateEvent
-                        ?
-                        "active create-event"
-                        :
-                        "create-event"} 
-              id="createEvent"
-              >
-                <input type="text" 
-                  placeholder="Название" 
-                  style={{ width: "20%", marginRight: "10px" }} 
-                  value={newEvent.title} 
-                  onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })} />
 
-                <textarea type="text" 
-                  placeholder="Описание" 
-                  style={{ width: "20%", marginRight: "10px" }} 
-                  value={newEvent.description} 
-                  onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })} />
-
-                <DatePicker 
-                  placeholderText="начало" 
-                  style={{ marginRight: "10px" }} 
-                  selected={newEvent.start} 
-                  showTimeSelect
-                  timeIntervals={1} 
-                  dateFormat = "PP"
-                  onChange={(start) => setNewEvent({ ...newEvent, start })} />
-
-                <DatePicker 
-                  placeholderText="конец" 
-                  selected={newEvent.end} 
-                  showTimeSelect
-                  timeIntervals={1}
-                  dateFormat = "PP"
-                  onChange={(end) => setNewEvent({ ...newEvent, end })} />
-
-                <button 
-                  stlye={{ marginTop: "10px" }} 
-                  onClick={handleAddEvent}>
-                    Создать
-                </button>
-            </div>
-
-
-
+            <CreateEventForm 
+              activeCreateEvent={activeCreateEvent} 
+              setActiveCreateEvent={setActiveCreateEvent}
+              newEvent={newEvent}
+              setNewEvent={setNewEvent}
+              handleAddEvent={handleAddEvent}
+            />
+          
             <div 
               className={ActiveAllEvent
                         ?
@@ -167,28 +126,21 @@ function App() {
 
                 <button 
                   stlye={{ marginTop: "10px" }} 
-                  onClick={handleAddEvent}>
-                    Создать
+                  onClick={close_and_save}>
+                    Закрыть
                 </button>
             </div>
 
 
                 <button 
-                  className={!activeCreateEvent
-                            ?
-                            ""
-                            :
-                            "nonactivebtn"}
-                  onClick={(e) => {
-                    setActiveCreateEvent(true)
-                  }}>
+                  className={!activeCreateEvent?"":"nonactivebtn"}
+                  onClick={() => {setActiveCreateEvent(true)}}
+                >
                   Создать событие
                 </button>
 
                 <button
-                  onClick={(e) => {
-                    setActiveAllEvent(true)
-                  }}
+                  onClick={() => {setActiveAllEvent(true)}}
                 >
                   Все события
                 </button>
@@ -198,7 +150,8 @@ function App() {
               events={allEvents} 
               startAccessor="start" 
               endAccessor="end" 
-              style={{ height: 500, margin: "50px" }}/>
+              style={{ height: 500, margin: "50px" }}
+            />
         </div>
     );
 }
