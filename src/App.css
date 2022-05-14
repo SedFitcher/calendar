@@ -6,10 +6,25 @@
   display: none;
 }
 
-.all-event{
-  display: none;
+.events {
+  z-index: 8;
+  width: 100vw;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.5s;
+  overflow: auto;
 }
 
-.all-event.active{
-  display: block;
+.events.active {
+  opacity: 1;
+  pointer-events: all;
 }

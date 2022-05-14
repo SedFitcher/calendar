@@ -5,10 +5,11 @@ import startOfWeek from "date-fns/startOfWeek";
 import React, { useState, useEffect } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import DatePicker from "react-datepicker";
+// import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./App.css";
 import CreateEventForm from "./components/CreateEventForm/CreateEventForm";
+import EditAndDeleteForm from "./components/EditAndDeleteForm/EditAndDeleteForm";
 
 const locales = {
     "ru": require("date-fns/locale/ru"),
@@ -54,10 +55,11 @@ function App() {
 
     console.log(newEvent)
 
-  const handleAddEvent = () => {
+    const handleAddEvent = () => {
         setAllEvents([...allEvents, newEvent]);
         setActiveCreateEvent(false)
         var nev = newEvent
+        // nev.id = Date.now();
         nev.start = nev.start.toISOString()
         nev.end = nev.end.toISOString()
         fetch("http://83.172.39.220:8000/events/", {
@@ -76,6 +78,14 @@ function App() {
       setActiveAllEvent(false)
     }
 
+    const close_and_delete = (e) => {
+      var url = "http://83.172.39.220:8000/events/"+e.target.id.toString()+"/"
+      fetch(url, {
+          method: 'DELETE',
+          mode: 'cors',
+        })
+    }
+
     return (
         <div className="App">
 
@@ -86,64 +96,45 @@ function App() {
               setNewEvent={setNewEvent}
               handleAddEvent={handleAddEvent}
             />
-          
             <div 
               className={ActiveAllEvent
-                        ?
-                        "active all-event"
-                        :
-                        "all-event"} 
-              id="allEvent"
-              >
-                <input type="text" 
-                  placeholder="Название" 
-                  style={{ width: "20%", marginRight: "10px" }} 
-                  value={newEvent.title} 
-                  onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })} />
-
-                <textarea type="text" 
-                  placeholder="Описание" 
-                  style={{ width: "20%", marginRight: "10px" }} 
-                  value={newEvent.description} 
-                  onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })} />
-
-                <DatePicker 
-                  placeholderText="начало" 
-                  style={{ marginRight: "10px" }} 
-                  selected={newEvent.start} 
-                  showTimeSelect
-                  timeIntervals={1} 
-                  dateFormat = "PP"
-                  onChange={(start) => setNewEvent({ ...newEvent, start })} />
-
-                <DatePicker 
-                  placeholderText="конец" 
-                  selected={newEvent.end} 
-                  showTimeSelect
-                  timeIntervals={1}
-                  dateFormat = "PP"
-                  onChange={(end) => setNewEvent({ ...newEvent, end })} />
-
-                <button 
-                  stlye={{ marginTop: "10px" }} 
-                  onClick={close_and_save}>
-                    Закрыть
-                </button>
+              ?
+              "active events"
+              :
+              "events"} 
+              id="createEvent"
+              onClick={() => {setActiveAllEvent(false)}}
+            >
+              {
+                allEvents.map((ev) => {
+                  return(
+                    <EditAndDeleteForm
+                      ActiveAllEvent={ActiveAllEvent}
+                      newEvent={newEvent}
+                      setActiveAllEvent={setActiveAllEvent}
+                      setNewEvent={setNewEvent}
+                      close_and_save={close_and_save}
+                      close_and_delete={close_and_delete}
+                      ev={ev}
+                      key={ev.id}
+                    />
+                  )
+                })
+              }
             </div>
 
+            <button 
+              className={!activeCreateEvent?"":"nonactivebtn"}
+              onClick={() => {setActiveCreateEvent(true)}}
+            >
+              Создать событие
+            </button>
 
-                <button 
-                  className={!activeCreateEvent?"":"nonactivebtn"}
-                  onClick={() => {setActiveCreateEvent(true)}}
-                >
-                  Создать событие
-                </button>
-
-                <button
-                  onClick={() => {setActiveAllEvent(true)}}
-                >
-                  Все события
-                </button>
+            <button
+              onClick={() => {setActiveAllEvent(true)}}
+            >
+              Все события
+            </button>
 
             <Calendar 
               localizer={localizer} 
