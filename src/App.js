@@ -108,6 +108,7 @@ function App() {
                   selected={newEvent.start} 
                   showTimeSelect
                   timeIntervals={1} 
+                  timeFormat="HH:mm"
                   dateFormat = "PP"
                   onChange={(start) => setNewEvent({ ...newEvent, start })} />
 
@@ -116,6 +117,7 @@ function App() {
                   selected={newEvent.end} 
                   showTimeSelect
                   timeIntervals={1}
+                  timeFormat="HH:mm"
                   dateFormat = "PP"
                   onChange={(end) => setNewEvent({ ...newEvent, end })} />
 
