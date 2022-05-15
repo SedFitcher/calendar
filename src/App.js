@@ -8,11 +8,18 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./App.css";
+import moment from "react-big-calendar/lib/localizers/moment";
+import 'react-big-calendar/lib/localizers/date-fns'
+import 'date-fns/locale/ru'
+import 'date-fns/locale/ru/_lib/localize'
+
+
 
 const locales = {
-    "ru": require("date-fns/locale/ru"),
+    "ru": require("date-fns/locale/ru/_lib/localize"),
 };
 const localizer = dateFnsLocalizer({
+    moment,
     format,
     parse,
     startOfWeek,
@@ -103,6 +110,7 @@ function App() {
                   onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })} />
 
                 <DatePicker 
+                  // locale='ru'
                   placeholderText="начало" 
                   style={{ marginRight: "10px" }} 
                   selected={newEvent.start} 
@@ -113,6 +121,7 @@ function App() {
                   onChange={(start) => setNewEvent({ ...newEvent, start })} />
 
                 <DatePicker 
+                  // locale='ru'
                   placeholderText="конец" 
                   selected={newEvent.end} 
                   showTimeSelect
@@ -197,6 +206,8 @@ function App() {
 
             <Calendar 
               localizer={localizer} 
+              locale='ru'
+              // culture = 'ru'
               events={allEvents} 
               startAccessor="start" 
               endAccessor="end" 
