@@ -109,7 +109,7 @@ function App() {
                   showTimeSelect
                   timeIntervals={1} 
                   timeFormat="HH:mm"
-                  dateFormat = "PP"
+                  dateFormat = "dd/MM/yyyy hh:mm"
                   onChange={(start) => setNewEvent({ ...newEvent, start })} />
 
                 <DatePicker 
@@ -118,7 +118,7 @@ function App() {
                   showTimeSelect
                   timeIntervals={1}
                   timeFormat="HH:mm"
-                  dateFormat = "PP"
+                  dateFormat = "dd/MM/yyyy hh:mm"
                   onChange={(end) => setNewEvent({ ...newEvent, end })} />
 
                 <button 
