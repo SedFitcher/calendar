@@ -2,6 +2,7 @@ import React from 'react';
 import DatePicker from "react-datepicker";
 import styles from './CreateEventForm.module.css'
 import classNames from 'classnames'
+// import 'react-datepicker/dist/react-datepicker.css'
 
 const CreateEventForm = ({
     activeCreateEvent, 
@@ -50,6 +51,7 @@ const CreateEventForm = ({
                     selected={newEvent.start} 
                     showTimeSelect
                     timeIntervals={1} 
+                    timeFormat="HH:mm"
                     dateFormat = "PP"
                     onChange={(start) => setNewEvent({ ...newEvent, start })} />
 
@@ -59,6 +61,7 @@ const CreateEventForm = ({
                     className={styles.picker}
                     showTimeSelect
                     timeIntervals={1}
+                    timeFormat="HH:mm"
                     dateFormat = "PP"
                     onChange={(end) => setNewEvent({ ...newEvent, end })} />
 
