@@ -1,5 +1,4 @@
 import React from 'react';
-import DatePicker from "react-datepicker";
 import styles from './CreateEventForm.module.css'
 import classNames from 'classnames'
 
@@ -20,7 +19,7 @@ const CreateEventForm = ({
             id="createEvent"
             onClick={() => {setActiveCreateEvent(false)}}
         >
-            <div 
+            <form 
                 className={activeCreateEvent
                 ?
                 classNames(styles.active, styles.createForm)
@@ -32,7 +31,6 @@ const CreateEventForm = ({
                     type="text" 
                     placeholder="Название" 
                     className={styles.createFormInput}
-                    // style={{ width: "20%", marginRight: "10px" }} 
                     value={newEvent.title} 
                     onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })} />
 
@@ -40,36 +38,32 @@ const CreateEventForm = ({
                     type="text" 
                     placeholder="Описание" 
                     className={styles.createFormTextarea}
-                    // style={{ width: "20%", marginRight: "10px" }} 
                     value={newEvent.description} 
                     onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })} />
 
-                <DatePicker 
+                <input 
+                    type="datetime-local"
+                    defaultValue={newEvent.start}
                     className={styles.picker}
-                    placeholderText="начало" 
-                    selected={newEvent.start} 
-                    showTimeSelect
-                    timeIntervals={1} 
-                    dateFormat = "PP"
-                    onChange={(start) => setNewEvent({ ...newEvent, start })} />
+                    // onChange={(e) => setNewEvent({ ...newEvent, start: new Date(Date.parse(e.target.value))})}
+                    onChange={(e) => setNewEvent({ ...newEvent, start: e.target.value})}
+                />
 
-                <DatePicker 
-                    placeholderText="конец" 
-                    selected={newEvent.end}
+                <input 
+                    type="datetime-local"
                     className={styles.picker}
-                    showTimeSelect
-                    timeIntervals={1}
-                    dateFormat = "PP"
-                    onChange={(end) => setNewEvent({ ...newEvent, end })} />
+                    defaultValue={newEvent.end}
+                    // onChange={(e) => setNewEvent({ ...newEvent, end: new Date(Date.parse(e.target.value))})}
+                    onChange={(e) => setNewEvent({ ...newEvent, end: e.target.value})}
+                />
 
                 <button 
                     className={styles.createbtn}
-                    // stlye={{ marginTop: "10px" }} 
                     onClick={handleAddEvent}
                 >
                       Создать
                 </button>
-            </div>
+            </form>
         </div>
     );
 };

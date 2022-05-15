@@ -1,3 +1,6 @@
+/* @import 'react-big-calendar/lib/sass/styles';
+@import 'react-big-calendar/lib/addons/dragAndDrop/styles'; */
+
 .App {
   text-align: center;
 }
@@ -28,3 +31,17 @@
   opacity: 1;
   pointer-events: all;
 }
+
+.dbtn {
+  padding: 5px;
+  background-color: red;
+  color: white;
+  border: 2px solid black;
+  cursor: pointer;
+}
+
+.eventBlock {
+  padding: 5px;
+  border: 2px solid black;
+}
+

@@ -1,26 +1,16 @@
-import format from "date-fns/format";
-import getDay from "date-fns/getDay";
-import parse from "date-fns/parse";
-import startOfWeek from "date-fns/startOfWeek";
 import React, { useState, useEffect } from "react";
-import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-// import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import "./App.css";
 import CreateEventForm from "./components/CreateEventForm/CreateEventForm";
 import EditAndDeleteForm from "./components/EditAndDeleteForm/EditAndDeleteForm";
+import FullCalendar from '@fullcalendar/react' // must go before plugins
+import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
+import interactionPlugin from '@fullcalendar/interaction'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import ruLocale from '@fullcalendar/core/locales/ru'
+import { toIS } from "./components/EditAndDeleteForm/toISOSTR";
+import { handleAddEvent, createev, close_and_delete, close_and_save,  renderEventContent} from "./logicFunctions";
 
-const locales = {
-    "ru": require("date-fns/locale/ru"),
-};
-const localizer = dateFnsLocalizer({
-    format,
-    parse,
-    startOfWeek,
-    getDay,
-    locales,
-});
 
 const events = [];
 
@@ -46,45 +36,12 @@ function App() {
             }
             setAllEvents(ev);
           },
-          // Примечание: важно обрабатывать ошибки именно здесь, а не в блоке catch(),
-          // чтобы не перехватывать исключения из ошибок в самих компонентах.
-          (error) => {
-          }
         )
     }, [])
 
     console.log(newEvent)
 
-    const handleAddEvent = () => {
-        setAllEvents([...allEvents, newEvent]);
-        setActiveCreateEvent(false)
-        var nev = newEvent
-        // nev.id = Date.now();
-        nev.start = nev.start.toISOString()
-        nev.end = nev.end.toISOString()
-        fetch("http://83.172.39.220:8000/events/", {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(nev)
 
-        })
-        setNewEvent({ title: "", description: "", start: "", end: "", id: null })
-    }
-
-    const close_and_save = () => {
-      setActiveAllEvent(false)
-    }
-
-    const close_and_delete = (e) => {
-      var url = "http://83.172.39.220:8000/events/"+e.target.id.toString()+"/"
-      fetch(url, {
-          method: 'DELETE',
-          mode: 'cors',
-        })
-    }
 
     return (
         <div className="App">
@@ -94,7 +51,9 @@ function App() {
               setActiveCreateEvent={setActiveCreateEvent}
               newEvent={newEvent}
               setNewEvent={setNewEvent}
-              handleAddEvent={handleAddEvent}
+              handleAddEvent={()=>{
+                handleAddEvent(newEvent, setNewEvent, setAllEvents, allEvents, setActiveCreateEvent)
+              }}
             />
             <div 
               className={ActiveAllEvent
@@ -109,6 +68,8 @@ function App() {
                 allEvents.map((ev) => {
                   return(
                     <EditAndDeleteForm
+                      allEvents={allEvents}
+                      setAllEvents={setAllEvents}
                       ActiveAllEvent={ActiveAllEvent}
                       newEvent={newEvent}
                       setActiveAllEvent={setActiveAllEvent}
@@ -123,25 +84,40 @@ function App() {
               }
             </div>
 
-            <button 
-              className={!activeCreateEvent?"":"nonactivebtn"}
-              onClick={() => {setActiveCreateEvent(true)}}
-            >
-              Создать событие
-            </button>
-
-            <button
-              onClick={() => {setActiveAllEvent(true)}}
-            >
-              Все события
-            </button>
-
-            <Calendar 
-              localizer={localizer} 
-              events={allEvents} 
-              startAccessor="start" 
-              endAccessor="end" 
-              style={{ height: 500, margin: "50px" }}
+            <FullCalendar
+              customButtons={{
+                newEventbtn: {
+                    text: 'Создать событие',
+                    click: ()=>setActiveCreateEvent(true)
+                },
+                allEventsbtn: {
+                  text: 'Все события',
+                  click: ()=>setActiveAllEvent(true)
+                }
+              }}
+              plugins={[ dayGridPlugin, interactionPlugin, timeGridPlugin ]}
+              initialView="dayGridMonth"
+              headerToolbar={{
+                left: 'prevYear,prev,next,nextYear,today,newEventbtn,allEventsbtn',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+              }}
+              eventContent={(e)=>renderEventContent(e)}
+              eventClick={e=>{console.log(e)}}
+              slotLabelFormat={{
+                hour: '2-digit',
+                minute: '2-digit',
+                meridiem: false,
+                hour12: false
+              }}
+              locale={ruLocale}
+              editable={true}
+              selectable={true}
+              dateClick={(e) => {
+                createev(e, setActiveCreateEvent, newEvent, setNewEvent, toIS)
+              }}
+              events={allEvents}
+              style={{width: '100vw'}}
             />
         </div>
     );
