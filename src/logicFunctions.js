@@ -5,42 +5,46 @@ export const handleAddEvent = (
     allEvents,
     setActiveCreateEvent,
 ) => {
-    newEvent.start = new Date(Date.parse(newEvent.start))
-    newEvent.end = new Date(Date.parse(newEvent.end))
-    console.log(newEvent.start, newEvent.end, typeof(newEvent.end), typeof(newEvent.start))
-    setAllEvents([...allEvents, newEvent]);
-    console.log(allEvents)
-    setActiveCreateEvent(false)
-    var nev = newEvent
-    nev.start = nev.start.toISOString()
-    nev.end = nev.end.toISOString()
-    fetch("http://83.172.39.220:8000/events/", {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(nev)
+    if(newEvent.title === "" || newEvent.description === "" || newEvent.start === "" || newEvent.end === "") {
+      setActiveCreateEvent(false)
+    }else{
+      newEvent.start = new Date(Date.parse(newEvent.start))
+      newEvent.end = new Date(Date.parse(newEvent.end))
+      console.log(newEvent.start, newEvent.end, typeof(newEvent.end), typeof(newEvent.start))
+      setAllEvents([...allEvents, newEvent]);
+      console.log(allEvents)
+      setActiveCreateEvent(false)
+      var nev = newEvent
+      nev.start = nev.start.toISOString()
+      nev.end = nev.end.toISOString()
+      fetch("http://83.172.39.220:8000/events/", {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(nev)
 
-    }).then(res => res.json())
-    .then(
-      (result) => {
-        console.log(result)
-        var ev = result
-        for(var i = 0; i < ev.length; i++){
-            var start = new Date(Date.parse(ev[i].start))
-            var end = new Date(Date.parse(ev[i].end))
-            ev[i].start = start
-            ev[i].end = end
+      }).then(res => res.json())
+      .then(
+        (result) => {
+          console.log(result)
+          var ev = result
+          for(var i = 0; i < ev.length; i++){
+              var start = new Date(Date.parse(ev[i].start))
+              var end = new Date(Date.parse(ev[i].end))
+              ev[i].start = start
+              ev[i].end = end
 
-        }
-        if(allEvents == []){
-          setAllEvents([...allEvents, ev])
-        }else{
-          setAllEvents(ev);
-        }
-      },)
-    setNewEvent({ title: "", description: "", start: "", end: "", id: null })
+          }
+          if(allEvents == []){
+            setAllEvents([...allEvents, ev])
+          }else{
+            setAllEvents(ev);
+          }
+        },)
+      setNewEvent({ title: "", description: "", start: "", end: "", id: null })
+    }
 }
 
 export const createev = (e, setActiveCreateEvent, newEvent, setNewEvent, toIS) => {
@@ -94,4 +98,19 @@ export function renderEventContent(eventInfo) {
         </form>
       </div>
     )
+}
+
+export const dropEvent = (e) => {
+  var url = "http://83.172.39.220:8000/events/"+e.event._def.publicId+"/"
+  fetch(url, {
+    method: 'PUT',
+    mode: 'cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      title: e.event.title,
+      description: e.event.extendedProps.description,
+      start: e.event._instance.range.start,
+      end: e.event._instance.range.end
+    })
+  })
 }

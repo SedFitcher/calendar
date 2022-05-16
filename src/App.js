@@ -9,7 +9,14 @@ import interactionPlugin from '@fullcalendar/interaction'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import ruLocale from '@fullcalendar/core/locales/ru'
 import { toIS } from "./components/EditAndDeleteForm/toISOSTR";
-import { handleAddEvent, createev, close_and_delete, close_and_save,  renderEventContent} from "./logicFunctions";
+import { 
+  handleAddEvent, 
+  createev, 
+  close_and_delete, 
+  close_and_save,  
+  renderEventContent,
+  dropEvent,
+} from "./logicFunctions";
 
 
 const events = [];
@@ -40,8 +47,6 @@ function App() {
     }, [])
 
     console.log(newEvent)
-
-
 
     return (
         <div className="App">
@@ -103,7 +108,7 @@ function App() {
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
               }}
               eventContent={(e)=>renderEventContent(e)}
-              eventClick={e=>{console.log(e)}}
+              eventClick={e=>{setActiveAllEvent(true)}}
               slotLabelFormat={{
                 hour: '2-digit',
                 minute: '2-digit',
@@ -112,12 +117,13 @@ function App() {
               }}
               locale={ruLocale}
               editable={true}
+              droppable={true}
+              eventDrop={e=>dropEvent(e)}
               selectable={true}
               dateClick={(e) => {
                 createev(e, setActiveCreateEvent, newEvent, setNewEvent, toIS)
               }}
               events={allEvents}
-              style={{width: '100vw'}}
             />
         </div>
     );
