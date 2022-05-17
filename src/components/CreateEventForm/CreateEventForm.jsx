@@ -19,7 +19,7 @@ const CreateEventForm = ({
             id="createEvent"
             onClick={() => {setActiveCreateEvent(false)}}
         >
-            <form 
+            <div 
                 className={activeCreateEvent
                 ?
                 classNames(styles.active, styles.createForm)
@@ -63,7 +63,7 @@ const CreateEventForm = ({
                 >
                       Создать
                 </button>
-            </form>
+            </div>
         </div>
     );
 };

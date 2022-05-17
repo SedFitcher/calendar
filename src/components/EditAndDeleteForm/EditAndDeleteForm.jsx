@@ -56,7 +56,7 @@ const EditAndDeleteForm = ({
     }
 
     return (
-        <form 
+        <div 
             className={
                 ActiveAllEvent
                     ?classNames(styles.active, styles.allEvents)
@@ -112,24 +112,26 @@ const EditAndDeleteForm = ({
             />
             
             <div className={styles.btns}>
-                <button 
-                    className={styles.btn}
-                    id={ev.id}
-                    // stlye={{ marginTop: "10px" }} 
-                    onClick={e=>close_and_save(e, setActiveAllEvent, allEvents)}
-                >
-                    Сохранить
-                </button>
+                <form className={styles.blocksavebtn}>
+                    <button 
+                        className={styles.btn}
+                        id={ev.id}
+                        // stlye={{ marginTop: "10px" }} 
+                        onClick={e=>close_and_save(e, setActiveAllEvent, allEvents, setAllEvents, setNewEvent)}
+                    >
+                        Сохранить
+                    </button>
+                </form>
                 <button 
                     id={ev.id}
                     className={styles.delbtn}
                     // stlye={{ marginTop: "10px" }} 
-                    onClick={e=>{close_and_delete(e)}}
+                    onClick={e=>{close_and_delete(e, setAllEvents, allEvents, setActiveAllEvent)}}
                 >
                     Удалить
                 </button>
             </div>
-        </form>
+        </div>
     );
 };
 

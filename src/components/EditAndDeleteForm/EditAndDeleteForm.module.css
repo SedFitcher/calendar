@@ -52,6 +52,10 @@
     margin-right: 5px;
 }
 
+.blocksavebtn {
+    width: 100%;
+}
+
 .delbtn {
     width: 100%;
     padding: 10px;

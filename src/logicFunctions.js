@@ -8,15 +8,15 @@ export const handleAddEvent = (
     if(newEvent.title === "" || newEvent.description === "" || newEvent.start === "" || newEvent.end === "") {
       setActiveCreateEvent(false)
     }else{
-      newEvent.start = new Date(Date.parse(newEvent.start))
-      newEvent.end = new Date(Date.parse(newEvent.end))
-      console.log(newEvent.start, newEvent.end, typeof(newEvent.end), typeof(newEvent.start))
-      setAllEvents([...allEvents, newEvent]);
-      console.log(allEvents)
+      // newEvent.start = new Date(Date.parse(newEvent.start))
+      // newEvent.end = new Date(Date.parse(newEvent.end))
+      // console.log(newEvent.start, newEvent.end, typeof(newEvent.end), typeof(newEvent.start))
+      // setAllEvents([...allEvents, newEvent]);
+      // console.log(allEvents)
       setActiveCreateEvent(false)
       var nev = newEvent
-      nev.start = nev.start.toISOString()
-      nev.end = nev.end.toISOString()
+      // nev.start = nev.start.toISOString()
+      // nev.end = nev.end.toISOString()
       fetch("http://83.172.39.220:8000/events/", {
         method: 'POST',
         mode: 'cors',
@@ -28,7 +28,7 @@ export const handleAddEvent = (
       }).then(res => res.json())
       .then(
         (result) => {
-          console.log(result)
+          // console.log(result)
           var ev = result
           for(var i = 0; i < ev.length; i++){
               var start = new Date(Date.parse(ev[i].start))
@@ -37,31 +37,35 @@ export const handleAddEvent = (
               ev[i].end = end
 
           }
-          if(allEvents == []){
-            setAllEvents([...allEvents, ev])
-          }else{
-            setAllEvents(ev);
-          }
+          setAllEvents([...allEvents, ev]);
+          setNewEvent({ title: "", description: "", start: "", end: "", id: null })
+          // console.log(newEvent)
+          // console.log(typeof(allEvents))
         },)
-      setNewEvent({ title: "", description: "", start: "", end: "", id: null })
     }
 }
 
 export const createev = (e, setActiveCreateEvent, newEvent, setNewEvent, toIS) => {
     setActiveCreateEvent(true)
-    console.log(e)
+    // console.log(e)
     setNewEvent({ ...newEvent, start: toIS(e.dateStr) })
 }
 
-export const close_and_delete = (e) => {
+export const close_and_delete = (e, setAllEvents, allEvents, setActiveAllEvent) => {
     var url = "http://83.172.39.220:8000/events/"+e.target.id.toString()+"/"
     fetch(url, {
         method: 'DELETE',
         mode: 'cors',
+    }).then(res => {
+      console.log(res)
+      if (res.ok ===true) {
+        setAllEvents(allEvents.filter(event => event.id != e.target.id));
+      }
     })
+    setActiveAllEvent(false)
 }
 
-export const close_and_save = (e, setActiveAllEvent, allEvents) => {
+export const close_and_save = (e, setActiveAllEvent, allEvents, setAllEvents, setNewEvent) => {
     setActiveAllEvent(false)
     var body = ''
     for(var i = 0; i < allEvents.length; i++) {
@@ -75,27 +79,38 @@ export const close_and_save = (e, setActiveAllEvent, allEvents) => {
       mode: 'cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
-    })
+    }).then(res => res.json())
+    .then(
+      (result) => {
+        // console.log(result)
+        var alev = allEvents
+        for(var i = 0; i < alev.length; i++) {
+          if(alev[i].id == result.id) {
+            alev[i].title = result.title
+            alev[i].description = result.description
+            alev[i].start = result.start
+            alev[i].end = result.end
+          }
+        }
+        setAllEvents(alev)
+      },)
+      setNewEvent({ title: "", description: "", start: "", end: "", id: null })
 }
 
-export function renderEventContent(eventInfo) {
-    console.log(eventInfo.event.title, eventInfo.event._def.publicId, eventInfo.event.extendedProps)
-    console.log(eventInfo.event)
+export function renderEventContent(eventInfo, allEvents) {
+    var time = ''
+    for(var i = 0; i < allEvents.length; i++) {
+      if (allEvents[i].id == eventInfo.event._def.publicId) {
+        time = ISOtotime(allEvents[i].start.toISOString())
+        // time += ' - '
+        // time += ISOtotime(allEvents[i].end.toISOString())
+      }
+    }
     return (
       <div className="eventBlock">
-        {/* <b>{eventInfo.timeText}</b><br/> */}
+        <b>{time}</b><br/>
         <i>Событие: {eventInfo.event.title}</i><br/>
         <i>Описание: {eventInfo.event.extendedProps.description}</i><br/>
-        <form>
-          <button
-            className="dbtn" 
-            type=""
-            id={eventInfo.event._def.publicId}
-            onClick={e=>close_and_delete(e)}
-          >
-            Удалить
-          </button>
-        </form>
       </div>
     )
 }
@@ -113,4 +128,19 @@ export const dropEvent = (e) => {
       end: e.event._instance.range.end
     })
   })
+}
+
+export const ISOtotime = (isostr) => {
+  var st = isostr.split('')
+  for (var i = 0; i < 8; i++) {
+    st.pop()
+  }
+  for (var i = 0; i < 11; i++) {
+    st.shift()
+  }
+  var str = ''
+  for (var i = 0; i < st.length; i++) {
+    str += st[i]
+  }
+  return str
 }

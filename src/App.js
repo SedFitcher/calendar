@@ -46,7 +46,7 @@ function App() {
         )
     }, [])
 
-    console.log(newEvent)
+    // console.log(newEvent)
 
     return (
         <div className="App">
@@ -107,7 +107,7 @@ function App() {
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
               }}
-              eventContent={(e)=>renderEventContent(e)}
+              eventContent={(e)=>renderEventContent(e, allEvents)}
               eventClick={e=>{setActiveAllEvent(true)}}
               slotLabelFormat={{
                 hour: '2-digit',
