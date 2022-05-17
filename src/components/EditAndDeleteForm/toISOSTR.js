@@ -1,28 +1,28 @@
-export const toISOSTR = (isostr) => {
-    var str = new Date(Date.parse(isostr)).toISOString()
-    str = str.split('')
+export const toISOSTR = (isostr) => { // функция для приведения даты и времени к виду "год-месяц-деньТчас:минута"
+    var str = new Date(Date.parse(isostr)).toISOString() // приводим дату к формату iso 8601 "YY-MM-DDThh:mm:ss:SSSZ"
+    str = str.split('') // разбиваем строку на массив
     for (var i = 0; i < 8; i++) {
-        str.pop()
+        str.pop() // в цикле удаляем последние 8 элементов в массиве
     }
     var res = ""
     for (var j = 0; j < str.length; j++) {
-        res+=str[j]
+        res+=str[j] // в цикле собираем строку обратно
     }
-    return res
+    return res // возвращаем уже отформатированную строку
 }
 
-export const toIS = (str) => {
-    var st = str.split('')
-    if (st.length > 10) {
+export const toIS = (str) => { // функция для приведения времени к виду "год-месяц-деньT00:00"
+    var st = str.split('') // разбиваем строку на массив
+    if (st.length > 10) { // если в массие больше 10 элементов то в цикле удаляем последние 6 элементов чтобы получить формат "год-месяц-деньТчас:минута"
         for (var i = 0; i < 6; i++) {
             st.pop()
         }
-    }else{
+    }else{ // иначе добавляем в массив элемент "Т00:00" чтобы получить формат "год-месяц-деньТ00:00"
         st.push('T00:00')
     }
     var res = ""
     for (var j = 0; j < st.length; j++) {
-        res+=st[j]
+        res+=st[j] // в цикле собираем строку обратно
     }
-    return res
+    return res // возвращаем отформатированную строку
 }

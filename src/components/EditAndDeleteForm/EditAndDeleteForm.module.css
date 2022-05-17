@@ -49,11 +49,13 @@
     background-color: rgb(134, 45, 128);
     border: 2px solid black;
     cursor: pointer;
-    margin-right: 5px;
+    /* margin-right: 5px; */
 }
 
 .blocksavebtn {
     width: 100%;
+    padding: 0;
+    margin-right: 5px;
 }
 
 .delbtn {

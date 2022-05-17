@@ -1,16 +1,17 @@
-import React from 'react';
-import styles from './CreateEventForm.module.css'
-import classNames from 'classnames'
+// компонент модального окна создания заметки
+import React from 'react'; // импорт реакт
+import styles from './CreateEventForm.module.css' // импорт модуля со стилями
+import classNames from 'classnames' // импорт библиотеки для присвоения нескольких классов
 
 const CreateEventForm = ({
-    activeCreateEvent, 
-    setActiveCreateEvent, 
-    newEvent,
-    setNewEvent,
-    handleAddEvent,
+    activeCreateEvent, // состояние для условного рендеринга окна для создания событий  
+    setActiveCreateEvent, // функция изменения состояния для условного рендеринга окна для создания событий  
+    newEvent, // состояние для временного хранения нового события
+    setNewEvent, // функция изменения состояния для временного хранения нового события
+    handleAddEvent, // функция для добавления события
 }) => {
     return (
-        <div 
+        <div // див для размытия заднего фона
             className={activeCreateEvent
             ?
             classNames(styles.active, styles.createEvent)
@@ -19,45 +20,43 @@ const CreateEventForm = ({
             id="createEvent"
             onClick={() => {setActiveCreateEvent(false)}}
         >
-            <div 
+            <div // само модальное окно
                 className={activeCreateEvent
                 ?
                 classNames(styles.active, styles.createForm)
                 :
                 styles.createForm} 
-                onClick={e=>{e.stopPropagation()}}
+                onClick={e=>{e.stopPropagation()}} // сделано чтобы при нажатии на чтото на модальном окне оно не закрывалось
             >
-                <input 
+                <input // инпут для ввода заголовка события
                     type="text" 
                     placeholder="Название" 
                     className={styles.createFormInput}
                     value={newEvent.title} 
                     onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })} />
 
-                <textarea 
+                <textarea // инпут для ввода доп информауии о событии
                     type="text" 
                     placeholder="Описание" 
                     className={styles.createFormTextarea}
                     value={newEvent.description} 
                     onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })} />
 
-                <input 
+                <input // инпут для ввода даты и времени начала события
                     type="datetime-local"
                     defaultValue={newEvent.start}
                     className={styles.picker}
-                    // onChange={(e) => setNewEvent({ ...newEvent, start: new Date(Date.parse(e.target.value))})}
                     onChange={(e) => setNewEvent({ ...newEvent, start: e.target.value})}
                 />
 
-                <input 
+                <input // инпут для ввода даты и времени конца события
                     type="datetime-local"
                     className={styles.picker}
                     defaultValue={newEvent.end}
-                    // onChange={(e) => setNewEvent({ ...newEvent, end: new Date(Date.parse(e.target.value))})}
                     onChange={(e) => setNewEvent({ ...newEvent, end: e.target.value})}
                 />
 
-                <button 
+                <button // кнопка создания события
                     className={styles.createbtn}
                     onClick={handleAddEvent}
                 >
